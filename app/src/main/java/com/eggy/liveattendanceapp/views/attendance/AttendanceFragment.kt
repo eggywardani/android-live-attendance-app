@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.eggy.liveattendanceapp.R
+import com.eggy.liveattendanceapp.databinding.FragmentAttendanceBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -17,13 +18,13 @@ class AttendanceFragment : Fragment(), OnMapReadyCallback {
 
     private var mapAttendance:SupportMapFragment? = null
     private var map:GoogleMap? = null
-
+    private var binding:FragmentAttendanceBinding?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_attendance, container, false)
+        binding = FragmentAttendanceBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,14 +39,19 @@ class AttendanceFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap
-        val sydney = LatLng(-33.852, 151.211)
+        val location = LatLng(-6.798676406932624, 110.83369126786808)
         map?.addMarker(
             MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney")
+                .position(location)
+                .title("My Location")
         )
-        map?.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        map?.moveCamera(CameraUpdateFactory.newLatLng(location))
         map?.animateCamera(CameraUpdateFactory.zoomTo(20f))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding= null
     }
 
 }
