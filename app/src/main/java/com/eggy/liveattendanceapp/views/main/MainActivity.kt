@@ -1,4 +1,4 @@
-package com.eggy.liveattendanceapp.main
+package com.eggy.liveattendanceapp.views.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
