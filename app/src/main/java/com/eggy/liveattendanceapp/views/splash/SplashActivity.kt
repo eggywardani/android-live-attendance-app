@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.eggy.liveattendanceapp.R
+import com.eggy.liveattendanceapp.hawkstorage.HawkStorage
 import com.eggy.liveattendanceapp.views.login.LoginActivity
+import com.eggy.liveattendanceapp.views.main.MainActivity
 import org.jetbrains.anko.startActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -19,8 +21,21 @@ class SplashActivity : AppCompatActivity() {
 
     private fun afterDelayGotoLogin() {
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity<LoginActivity>()
-            finishAffinity()
+            checkIsLogin()
         },1200)
     }
+
+    private fun checkIsLogin() {
+        val isLogin= HawkStorage.instance(this).isLogin()
+
+        if (isLogin){
+            startActivity<MainActivity>()
+            finishAffinity()
+        }else{
+            startActivity<LoginActivity>()
+            finishAffinity()
+        }
+    }
+
+
 }
