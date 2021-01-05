@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginToServer(email: String, password: String) {
-        val loginRequest = LoginRequest(password, "mobile", email)
+        val loginRequest = LoginRequest(email = email, password = password, deviceName = "mobile")
         val loginRequestString = Gson().toJson(loginRequest)
 
         MyDialog.showProgressDialog(this)
