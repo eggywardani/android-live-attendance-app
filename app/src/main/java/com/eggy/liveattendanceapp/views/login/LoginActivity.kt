@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import com.eggy.liveattendanceapp.R
 import com.eggy.liveattendanceapp.databinding.ActivityLoginBinding
 import com.eggy.liveattendanceapp.dialog.MyDialog
 import com.eggy.liveattendanceapp.hawkstorage.HawkStorage
@@ -22,15 +23,13 @@ import retrofit2.Response
 import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityLoginBinding
-    companion object{
-        private val TAG = LoginActivity::class.java.simpleName
-    }
+
+    private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         onClick()
     }
@@ -42,9 +41,7 @@ class LoginActivity : AppCompatActivity() {
             if (isFormValid(email, password)){
                 loginToServer(email, password)
             }
-
         }
-
 
         binding.btnForgotPassword.setOnClickListener {
             startActivity<ForgotPasswordActivity>()
@@ -54,8 +51,8 @@ class LoginActivity : AppCompatActivity() {
     private fun loginToServer(email: String, password: String) {
         val loginRequest = LoginRequest(email = email, password = password, deviceName = "mobile")
         val loginRequestString = Gson().toJson(loginRequest)
-
         MyDialog.showProgressDialog(this)
+
         ApiServices.getLiveAttendanceServices()
             .loginRequest(loginRequestString)
             .enqueue(object : Callback<LoginResponse>{
@@ -64,40 +61,44 @@ class LoginActivity : AppCompatActivity() {
                     response: Response<LoginResponse>
                 ) {
                     MyDialog.hideDialog()
+                    Log.d("response", response.code().toString())
                     if (response.isSuccessful){
-                        val user = response.body()?.user
-                        val token = response.body()?.meta?.token
 
+                        val user = response.body()?.data
+                        val token = response.body()?.meta?.token
                         if (user != null && token != null){
                             HawkStorage.instance(this@LoginActivity).setUser(user)
                             HawkStorage.instance(this@LoginActivity).setToken(token)
                             goToMain()
-
                         }
-
                     }else{
-                        val errorConverter:Converter<ResponseBody, LoginResponse> =
-                            RetrofitClient.getClient()
+                        val errorConverter: Converter<ResponseBody, LoginResponse> =
+                            RetrofitClient
+                                .getClient()
                                 .responseBodyConverter(
                                     LoginResponse::class.java,
                                     arrayOfNulls<Annotation>(0)
                                 )
-
-                        var errorResponse:LoginResponse?
+                        var errorResponse: LoginResponse?
                         try {
                             response.errorBody()?.let {
                                 errorResponse = errorConverter.convert(it)
-                                MyDialog.dynamicDialog(this@LoginActivity, "Failed", errorResponse?.message.toString() )
+                                MyDialog.dynamicDialog(
+                                    this@LoginActivity,
+                                    getString(R.string.failed),
+                                    errorResponse?.message.toString()
+                                )
                             }
-                        }catch (e:IOException){
+                        }catch (e: IOException){
                             e.printStackTrace()
+                            Log.e(TAG, "Error: ${e.message}")
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     MyDialog.hideDialog()
-                    Log.e(TAG, "Error : ${t.message}")
+                    Log.e(TAG, "Error: ${t.message}")
                 }
 
             })
@@ -110,14 +111,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun isFormValid(email: String, password: String): Boolean {
         if (email.isEmpty()){
-            binding.etEmailLogin.error = "Please field your email"
+            binding.etEmailLogin.error = getString(R.string.please_field_your_email)
             binding.etEmailLogin.requestFocus()
         }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            binding.etEmailLogin.error = "Please use valid email"
+            binding.etEmailLogin.error = getString(R.string.please_use_valid_email)
             binding.etEmailLogin.requestFocus()
         }else if (password.isEmpty()){
             binding.etEmailLogin.error = null
-            binding.etPasswordLogin.error = "Please field your password"
+            binding.etPasswordLogin.error = getString(R.string.please_field_your_password)
             binding.etPasswordLogin.requestFocus()
         }else{
             binding.etEmailLogin.error = null
@@ -125,5 +126,9 @@ class LoginActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    companion object{
+        private val TAG = LoginActivity::class.java.simpleName
     }
 }

@@ -1,6 +1,8 @@
 package com.eggy.liveattendanceapp.networking
 
+import com.eggy.liveattendanceapp.model.Data
 import com.eggy.liveattendanceapp.model.LoginResponse
+import com.eggy.liveattendanceapp.views.login.LoginRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Headers

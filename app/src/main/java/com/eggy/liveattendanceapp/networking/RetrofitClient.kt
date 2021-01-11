@@ -2,7 +2,6 @@ package com.eggy.liveattendanceapp.networking
 
 import com.eggy.liveattendanceapp.BuildConfig
 import com.google.gson.GsonBuilder
-import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private const val REQUEST_TIME_OUT = 30
 
-    fun getClient():Retrofit{
+    fun getClient(): Retrofit {
         val gsonBuilder = GsonBuilder().setLenient().create()
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.HEADERS

@@ -1,7 +1,7 @@
 package com.eggy.liveattendanceapp.hawkstorage
 
 import android.content.Context
-import com.eggy.liveattendanceapp.model.User
+import com.eggy.liveattendanceapp.model.Data
 import com.orhanobut.hawk.Hawk
 
 class HawkStorage {
@@ -17,11 +17,11 @@ class HawkStorage {
         }
     }
 
-    fun setUser(user: User) {
+    fun setUser(user: Data) {
         Hawk.put(USER_KEY, user)
     }
 
-    fun getUser(): User {
+    fun getUser(): Data {
         return Hawk.get(USER_KEY)
     }
     fun setToken(token: String) {
